@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { convertCurrency, getSupportedSymbols } from '../../services/api';
 import './ConverterForm.css';
+import toast from 'react-hot-toast';
 
 export const ConverterForm = () => {
   const [amount, setAmount] = useState<number>(0);
@@ -14,18 +15,30 @@ export const ConverterForm = () => {
     if (!amount || !fromCurrency || !toCurrency) {
       return;
     }
-    const conversionRate = await convertCurrency(fromCurrency, toCurrency);
-    const sum = conversionRate * amount
-    setResult(`${amount} ${fromCurrency} = ${sum} ${toCurrency}`);
+    try {
+      const conversionRate = await convertCurrency(fromCurrency, toCurrency);
+      const sum = (conversionRate * amount).toFixed(2)
+      setResult(`${amount} ${fromCurrency} = ${sum} ${toCurrency}`);
+      toast.success('Currency converted successfully!');
+    } catch (error) {
+      toast.error('Failed to convert currency');
+    }
   };
 
   useEffect(() => {
 
-    setIsLoading(true)
-    getSupportedSymbols().then(data => {
-      setCurrencies(data);
-      setIsLoading(false)
-    });
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const symbolsData = await getSupportedSymbols();
+        setCurrencies(symbolsData);
+      } catch (error) {
+        toast.error('Failed to load currencies');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchData();
   }, [])
 
 
