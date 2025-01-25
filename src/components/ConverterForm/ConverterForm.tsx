@@ -1,95 +1,124 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useReducer } from 'react';
 import { convertCurrency, getSupportedSymbols } from '../../services/api';
-import './ConverterForm.css';
+import { converterReducer, initialState } from 'reducer';
 import toast from 'react-hot-toast';
+import './ConverterForm.css';
 
 export const ConverterForm = () => {
-  const [amount, setAmount] = useState<number>(0);
-  const [fromCurrency, setFromCurrency] = useState<string>('USD');
-  const [toCurrency, setToCurrency] = useState<string>('EUR');
-  const [result, setResult] = useState<string>('');
-  const [currencies, setCurrencies] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [state, dispatch] = useReducer(converterReducer, initialState);
+
+  useEffect(() => {
+    const fetchCurrencies = async () => {
+      try {
+        dispatch({ type: 'SET_LOADING', payload: true });
+        const symbols = await getSupportedSymbols();
+        dispatch({ type: 'SET_CURRENCIES', payload: symbols });
+      } catch (error) {
+        toast.error('Failed to fetch currencies');
+      } finally {
+        dispatch({ type: 'SET_LOADING', payload: false });
+      }
+    };
+    fetchCurrencies();
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!amount || !fromCurrency || !toCurrency) {
-      return;
-    }
+    if (!state.amount || !state.fromCurrency || !state.toCurrency) return;
+
     try {
-      const conversionRate = await convertCurrency(fromCurrency, toCurrency);
-      const sum = (conversionRate * amount).toFixed(2)
-      setResult(`${amount} ${fromCurrency} = ${sum} ${toCurrency}`);
-      toast.success('Currency converted successfully!');
+      dispatch({ type: 'SET_LOADING', payload: true });
+      const rate = await convertCurrency(state.fromCurrency, state.toCurrency);
+      const sum = (rate * state.amount).toFixed(2);
+      dispatch({
+        type: 'SET_RESULT',
+        payload: `${state.amount} ${state.fromCurrency} = ${sum} ${state.toCurrency}`,
+      });
+      toast.success('Conversion successful!');
     } catch (error) {
-      toast.error('Failed to convert currency');
+      toast.error('Conversion failed');
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
     }
   };
 
-  useEffect(() => {
-
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        const symbolsData = await getSupportedSymbols();
-        setCurrencies(symbolsData);
-      } catch (error) {
-        toast.error('Failed to load currencies');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchData();
-  }, [])
-
+  const handleSwapCurrencies = () => {
+    dispatch({ type: 'SWAP_CURRENCIES' });
+    toast.success('Currencies swapped!');
+  };
 
   return (
-    <>
+    <div className="converter-container">
+      <h2>Currency Converter</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label>Amount:</label>
           <input
             type="number"
-            value={amount}
-            onChange={(e) => setAmount(Number(e.target.value))}
+            value={state.amount}
+            onChange={(e) => dispatch({ 
+              type: 'SET_AMOUNT', 
+              payload: Number(e.target.value) 
+            })}
             placeholder="Enter amount"
             required
           />
         </div>
 
-        <div className="form-group">
-          <label>From:</label>
-          <select
-            value={fromCurrency}
-            onChange={(e) => setFromCurrency(e.target.value)}
-            disabled={isLoading}
+        <div className="currencies-container">
+          <div className="form-group">
+            <label>From:</label>
+            <select
+              value={state.fromCurrency}
+              onChange={(e) => dispatch({ 
+                type: 'SET_FROM_CURRENCY', 
+                payload: e.target.value 
+              })}
+              disabled={state.isLoading}
+            >
+              {state.currencies.map(currency => (
+                <option key={currency} value={currency}>{currency}</option>
+              ))}
+            </select>
+          </div>
+
+          <button
+            type="button"
+            className="swap-button"
+            onClick={handleSwapCurrencies}
+            disabled={state.isLoading}
           >
-            {currencies.length > 0 && currencies.map(currency => (
-              <option key={currency[0]} value={currency[0]}>{currency[1]} | {currency[0]}</option>
-            ))}
-          </select>
+            ⇄
+          </button>
+
+          <div className="form-group">
+            <label>To:</label>
+            <select
+              value={state.toCurrency}
+              onChange={(e) => dispatch({ 
+                type: 'SET_TO_CURRENCY', 
+                payload: e.target.value 
+              })}
+              disabled={state.isLoading}
+            >
+              {state.currencies.map(currency => (
+                <option key={currency} value={currency}>{currency}</option>
+              ))}
+            </select>
+          </div>
         </div>
 
-        <div className="form-group">
-          <label>To:</label>
-          <select
-            value={toCurrency}
-            onChange={(e) => setToCurrency(e.target.value)}
-            disabled={isLoading}
-          >
-            {currencies.length > 0 && currencies.map(currency => (
-              <option key={currency[0]} value={currency[0]}>{currency[1]} | {currency[0]}</option>
-            ))}
-          </select>
-        </div>
-
-        <button type="submit">Convert</button>
+        <button type="submit" disabled={state.isLoading}>
+          Convert
+        </button>
       </form>
-      {result && (
+
+      {state.result && (
         <div className="result">
           <h3>Result:</h3>
-          <p>{result}</p>
+          <p>{state.result}</p>
         </div>
       )}
-    </>
-  )
-}
+    </div>
+  );
+};
