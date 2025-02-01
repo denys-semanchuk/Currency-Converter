@@ -1,0 +1,36 @@
+.exchange-rate-widget {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 16px 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.rate-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rate-label {
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.rate-value {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #212529;
+}
+
+.loading {
+  color: #6c757d;
+  font-style: italic;
+}
+
+.update-text {
+  display: block;
+  font-size: 0.8rem;
+  color: #adb5bd;
+  margin-top: 4px;
+}

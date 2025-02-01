@@ -6,6 +6,7 @@ import { FavoriteCurrencies } from 'components/FavoriteCurrencies/FavoriteCurren
 import { StarButton } from 'components/StarButton/StarButton';
 import AmountInput from 'components/AmountInput/AmountInput';
 import './ConverterForm.css';
+import { ExchangeRateWidget } from 'components/ExchangeRateWidget/ExchangeRateWidget';
 
 export const ConverterForm = () => {
   const {
@@ -120,6 +121,10 @@ export const ConverterForm = () => {
         </div>
       )}
       <CurrencyChart
+        fromCurrency={state.fromCurrency}
+        toCurrency={state.toCurrency}
+      />
+       <ExchangeRateWidget 
         fromCurrency={state.fromCurrency}
         toCurrency={state.toCurrency}
       />
