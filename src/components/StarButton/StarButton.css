@@ -1,0 +1,56 @@
+.star-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  transition: transform 0.2s ease;
+  color: #FFD700;
+  display: inline-block;
+  outline: none;
+  width: auto;
+  margin-top: 0;
+}
+
+.star-button:hover:not(.disabled) {
+  transform: scale(1.1);
+}
+
+.star-button:active:not(.disabled) {
+  transform: scale(0.95);
+}
+
+.star-button.active {
+  color: #FFD700;
+  animation: pop 0.3s ease-in-out;
+}
+
+.star-button:not(.active) {
+  color: #ccc;
+}
+
+.star-button.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@keyframes pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+.star-button svg {
+  width: 20px;
+  height: 20px;
+  transition: all 0.2s ease;
+}
+
+.star-button:focus {
+  outline: 2px solid #0066cc;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.star-button:focus:not(:focus-visible) {
+  outline: none;
+}

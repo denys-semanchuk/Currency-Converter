@@ -7,7 +7,8 @@
   margin-bottom: 0.5rem;
 }
 
-input, select {
+input,
+select {
   width: 100%;
   padding: 0.5rem;
   border: 1px solid #ccc;
@@ -44,10 +45,11 @@ h2 {
 }
 
 .currencies-container {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+  display: grid;
   margin-bottom: 1rem;
+  grid-template-columns: 40% 10% 41%;
+  gap: 1rem;
+  align-items: center;
 }
 
 .swap-button {
@@ -70,4 +72,9 @@ h2 {
 .swap-button:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
+}
+
+.select-with-star {
+  display: flex;
+  align-items: center;
 }

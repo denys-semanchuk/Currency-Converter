@@ -11,6 +11,7 @@ interface ConverterContextType {
     result: string;
     currencies: string[];
     isLoading: boolean;
+    favorites: string[]
   };
   dispatch: React.Dispatch<any>;
   fetchCurrencies: () => Promise<void>;

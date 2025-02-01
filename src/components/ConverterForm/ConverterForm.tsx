@@ -3,6 +3,9 @@ import toast from 'react-hot-toast';
 import './ConverterForm.css';
 import { CurrencyChart } from 'components/CurrencyChart/CurrencyChart';
 import { useConverter } from 'contexts/ConvertContext';
+import { FavoriteCurrencies } from 'components/FavoriteCurrencies/FavoriteCurrencies';
+import { StarButton } from 'components/StarButton/StarButton';
+import AmountInput from 'components/AmountInput/AmountInput';
 
 export const ConverterForm = () => {
   const {
@@ -16,7 +19,7 @@ export const ConverterForm = () => {
     fetchCurrencies();
   }, []);
 
-  const handleSubmit = async (e:any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
     handleConvert(state.amount, state.fromCurrency, state.toCurrency);
   };
@@ -27,39 +30,44 @@ export const ConverterForm = () => {
     toast.success('Currencies swapped!');
   };
 
+
   return (
     <div className="converter-container">
       <h2>Currency Converter</h2>
       <form onSubmit={handleSubmit}>
+        <FavoriteCurrencies />
         <div className="form-group">
-          <label>Amount:</label>
-          <input
-            type="number"
-            value={state.amount}
-            onChange={(e) => dispatch({
-              type: 'SET_AMOUNT',
-              payload: Number(e.target.value)
-            })}
-            placeholder="Enter amount"
-            required
-          />
+          <AmountInput />
         </div>
 
         <div className="currencies-container">
           <div className="form-group">
             <label>From:</label>
-            <select
-              value={state.fromCurrency}
-              onChange={(e) => dispatch({
-                type: 'SET_FROM_CURRENCY',
-                payload: e.target.value
-              })}
-              disabled={state.isLoading}
-            >
-              {state.currencies.map(currency => (
-                <option key={currency} value={currency}>{currency}</option>
-              ))}
-            </select>
+            <div className="select-with-star">
+              <select
+                value={state.fromCurrency}
+                onChange={(e) => dispatch({
+                  type: 'SET_FROM_CURRENCY',
+                  payload: e.target.value
+                })}
+                disabled={state.isLoading}
+              >
+                {state.currencies.map(currency => (
+                  <option key={currency} value={currency}>
+                    {currency}
+                  </option>
+                ))}
+              </select>
+              <StarButton
+                isActive={state.favorites.includes(state.fromCurrency)}
+                onClick={() => dispatch({
+                  type: state.favorites.includes(state.fromCurrency)
+                    ? 'REMOVE_FAVORITE'
+                    : 'ADD_FAVORITE',
+                  payload: state.fromCurrency
+                })}
+              />
+            </div>
           </div>
 
           <button
@@ -73,18 +81,30 @@ export const ConverterForm = () => {
 
           <div className="form-group">
             <label>To:</label>
-            <select
-              value={state.toCurrency}
-              onChange={(e) => dispatch({
-                type: 'SET_TO_CURRENCY',
-                payload: e.target.value
-              })}
-              disabled={state.isLoading}
-            >
-              {state.currencies.map(currency => (
-                <option key={currency} value={currency}>{currency}</option>
-              ))}
-            </select>
+            <div className="select-with-star">
+
+              <select
+                value={state.toCurrency}
+                onChange={(e) => dispatch({
+                  type: 'SET_TO_CURRENCY',
+                  payload: e.target.value
+                })}
+                disabled={state.isLoading}
+              >
+                {state.currencies.map(currency => (
+                  <option key={currency} value={currency}>{currency}</option>
+                ))}
+              </select>
+              <StarButton
+                isActive={state.favorites.includes(state.toCurrency)}
+                onClick={() => dispatch({
+                  type: state.favorites.includes(state.toCurrency)
+                    ? 'REMOVE_FAVORITE'
+                    : 'ADD_FAVORITE',
+                  payload: state.toCurrency
+                })}
+              />
+            </div>
           </div>
         </div>
 
