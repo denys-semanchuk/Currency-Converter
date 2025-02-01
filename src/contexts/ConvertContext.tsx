@@ -1,4 +1,4 @@
-import React, { createContext, useReducer, useContext, useEffect } from 'react';
+import React, { createContext, useReducer, useContext } from 'react';
 import { converterReducer, initialState } from 'reducer';
 import toast from 'react-hot-toast';
 import { convertCurrency, getSupportedSymbols } from 'services/api';
