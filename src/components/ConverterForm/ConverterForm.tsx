@@ -36,7 +36,6 @@ export const ConverterForm = () => {
     <div className="converter-container">
       <h2>Currency Converter</h2>
       <form onSubmit={handleSubmit}>
-        <FavoriteCurrencies />
         <div className="form-group">
           <AmountInput />
         </div>
@@ -114,6 +113,7 @@ export const ConverterForm = () => {
         </button>
       </form>
 
+      <FavoriteCurrencies />
       {state.result && (
         <div className="result">
           <h3>Result:</h3>
@@ -124,7 +124,7 @@ export const ConverterForm = () => {
         fromCurrency={state.fromCurrency}
         toCurrency={state.toCurrency}
       />
-       <ExchangeRateWidget 
+      <ExchangeRateWidget
         fromCurrency={state.fromCurrency}
         toCurrency={state.toCurrency}
       />

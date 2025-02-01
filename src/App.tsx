@@ -1,6 +1,7 @@
 import React from 'react';
 import { Converter } from './components/Converter/Converter';
 import { Toaster } from 'react-hot-toast';
+import { Footer } from 'components/Footer/Footer';
 
 function App() {
   return (
@@ -27,8 +28,10 @@ function App() {
           },
         }}
       />
-      <Converter />
-      
+      <main>
+        <Converter />
+      </main>
+      <Footer />
     </div>
   );
 }
