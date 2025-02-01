@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from 'axios';
 
 interface RatesResponse {
   success: boolean;
@@ -7,22 +7,42 @@ interface RatesResponse {
   date: string;
 }
 
-const API_KEY = process.env.REACT_APP_API_KEY;
-const BASE_URL = process.env.REACT_APP_API_URL;
+interface FrankfurterSymbolsResponse {
+  [key: string]: string;
+}
+
+interface FrankfurterHistoricalResponse {
+  amount: number;
+  base: string;
+  start_date: string;
+  end_date: string;
+  rates: {
+    [date: string]: {
+      [currency: string]: number;
+    };
+  };
+}
 
 const api = axios.create({
-  baseURL: `${BASE_URL}/${API_KEY}`,
+  baseURL: 'https://api.frankfurter.app'
 });
 
 export const convertCurrency = async (
   from: string,
   to: string,
-) => {
+  amount: number = 1
+): Promise<number> => {
   try {
-    const response = await api.get(`/pair/${from}/${to}`);
-    return response.data.conversion_rate;
+    const response = await api.get('/latest', {
+      params: {
+        amount,
+        from,
+        to
+      }
+    });
+    return response.data.rates[to];
   } catch (error) {
-    console.error("Error converting currency:", error);
+    console.error('Error converting currency:', error);
     throw error;
   }
 };
@@ -50,13 +70,30 @@ export const getLatestRates = async (
 
 export const getSupportedSymbols = async (): Promise<string[]> => {
   try {
-    const response = await api.get("/codes");
-    if (response.data.result !== "success") {
-      throw new Error("Failed to fetch symbols");
-    }
-    return response.data.supported_codes;
+    const response = await api.get<FrankfurterSymbolsResponse>('/currencies');
+    return Object.keys(response.data);
   } catch (error) {
     console.error("Error fetching symbols:", error);
     return ["USD", "EUR", "GBP", "JPY", "AUD"];
+  }
+};
+
+export const getHistoricalRates = async (
+  base: string,
+  symbol: string,
+  startDate: string,
+  endDate: string
+): Promise<FrankfurterHistoricalResponse> => {
+  try {
+    const response = await api.get<FrankfurterHistoricalResponse>(`/${startDate}..${endDate}`, {
+      params: {
+        from: base,
+        to: symbol
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching historical rates:', error);
+    throw error;
   }
 };

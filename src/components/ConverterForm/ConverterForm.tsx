@@ -1,46 +1,26 @@
-import React, { useEffect, useReducer } from 'react';
-import { convertCurrency, getSupportedSymbols } from '../../services/api';
-import { converterReducer, initialState } from 'reducer';
+import React, { useEffect } from 'react';
 import toast from 'react-hot-toast';
 import './ConverterForm.css';
+import { CurrencyChart } from 'components/CurrencyChart/CurrencyChart';
+import { useConverter } from 'contexts/ConvertContext';
 
 export const ConverterForm = () => {
-  const [state, dispatch] = useReducer(converterReducer, initialState);
+  const {
+    state,
+    fetchCurrencies,
+    handleConvert,
+    dispatch,
+  } = useConverter();
 
   useEffect(() => {
-    const fetchCurrencies = async () => {
-      try {
-        dispatch({ type: 'SET_LOADING', payload: true });
-        const symbols = await getSupportedSymbols();
-        dispatch({ type: 'SET_CURRENCIES', payload: symbols });
-      } catch (error) {
-        toast.error('Failed to fetch currencies');
-      } finally {
-        dispatch({ type: 'SET_LOADING', payload: false });
-      }
-    };
     fetchCurrencies();
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e:any) => {
     e.preventDefault();
-    if (!state.amount || !state.fromCurrency || !state.toCurrency) return;
-
-    try {
-      dispatch({ type: 'SET_LOADING', payload: true });
-      const rate = await convertCurrency(state.fromCurrency, state.toCurrency);
-      const sum = (rate * state.amount).toFixed(2);
-      dispatch({
-        type: 'SET_RESULT',
-        payload: `${state.amount} ${state.fromCurrency} = ${sum} ${state.toCurrency}`,
-      });
-      toast.success('Conversion successful!');
-    } catch (error) {
-      toast.error('Conversion failed');
-    } finally {
-      dispatch({ type: 'SET_LOADING', payload: false });
-    }
+    handleConvert(state.amount, state.fromCurrency, state.toCurrency);
   };
+
 
   const handleSwapCurrencies = () => {
     dispatch({ type: 'SWAP_CURRENCIES' });
@@ -56,9 +36,9 @@ export const ConverterForm = () => {
           <input
             type="number"
             value={state.amount}
-            onChange={(e) => dispatch({ 
-              type: 'SET_AMOUNT', 
-              payload: Number(e.target.value) 
+            onChange={(e) => dispatch({
+              type: 'SET_AMOUNT',
+              payload: Number(e.target.value)
             })}
             placeholder="Enter amount"
             required
@@ -70,9 +50,9 @@ export const ConverterForm = () => {
             <label>From:</label>
             <select
               value={state.fromCurrency}
-              onChange={(e) => dispatch({ 
-                type: 'SET_FROM_CURRENCY', 
-                payload: e.target.value 
+              onChange={(e) => dispatch({
+                type: 'SET_FROM_CURRENCY',
+                payload: e.target.value
               })}
               disabled={state.isLoading}
             >
@@ -95,9 +75,9 @@ export const ConverterForm = () => {
             <label>To:</label>
             <select
               value={state.toCurrency}
-              onChange={(e) => dispatch({ 
-                type: 'SET_TO_CURRENCY', 
-                payload: e.target.value 
+              onChange={(e) => dispatch({
+                type: 'SET_TO_CURRENCY',
+                payload: e.target.value
               })}
               disabled={state.isLoading}
             >
@@ -119,6 +99,10 @@ export const ConverterForm = () => {
           <p>{state.result}</p>
         </div>
       )}
+      <CurrencyChart
+        fromCurrency={state.fromCurrency}
+        toCurrency={state.toCurrency}
+      />
     </div>
   );
 };

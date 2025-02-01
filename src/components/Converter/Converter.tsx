@@ -1,11 +1,14 @@
 import React from 'react';
 import './Converter.css';
 import { ConverterForm } from '../ConverterForm/ConverterForm';
+import { ConverterProvider } from 'contexts/ConvertContext';
 
 export const Converter = () => {
   return (
-    <div className="Converter">
-      <ConverterForm />
-    </div>
+    <ConverterProvider>
+      <div className="Converter">
+        <ConverterForm />
+      </div>
+    </ConverterProvider>
   );
 }
