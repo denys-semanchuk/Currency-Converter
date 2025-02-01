@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import toast from 'react-hot-toast';
-import './ConverterForm.css';
 import { CurrencyChart } from 'components/CurrencyChart/CurrencyChart';
 import { useConverter } from 'contexts/ConvertContext';
 import { FavoriteCurrencies } from 'components/FavoriteCurrencies/FavoriteCurrencies';
 import { StarButton } from 'components/StarButton/StarButton';
 import AmountInput from 'components/AmountInput/AmountInput';
+import './ConverterForm.css';
 
 export const ConverterForm = () => {
   const {

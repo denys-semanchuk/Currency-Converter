@@ -1,6 +1,6 @@
-import { useConverter } from 'contexts/ConvertContext';
 import React from 'react'
-
+import { useConverter } from 'contexts/ConvertContext';
+import './AmountInput.css'
 
 export default function AmountInput() {
   const { state, dispatch } = useConverter()
