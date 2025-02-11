@@ -28,7 +28,10 @@ interface CurrencyChartProps {
   toCurrency: string;
 }
 
-export const CurrencyChart: React.FC<CurrencyChartProps> = ({ fromCurrency, toCurrency }) => {
+export const CurrencyChart = React.memo<CurrencyChartProps>(({ 
+  fromCurrency, 
+  toCurrency 
+}) => {
   const [chartData, setChartData] = React.useState<any>(null);
   const [isLoading, setIsLoading] = React.useState(false);
 
@@ -84,4 +87,8 @@ export const CurrencyChart: React.FC<CurrencyChartProps> = ({ fromCurrency, toCu
       <Line options={options} data={chartData} />
     </div>
   );
-};
+}, 
+(prevProps, nextProps) => {
+  return prevProps.fromCurrency === nextProps.fromCurrency && 
+         prevProps.toCurrency === nextProps.toCurrency;
+});

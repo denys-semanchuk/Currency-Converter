@@ -3,22 +3,27 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@testing-library/react": "^16.2.0",
     "axios": "^1.7.9",
     "chart.js": "^4.4.7",
     "cra-template-typescript": "1.2.0",
     "date-fns": "^4.1.0",
     "dotenv": "^16.4.7",
-    "react": "^19.0.0",
+    "react": "^18.2.0",
     "react-chartjs-2": "^5.3.0",
-    "react-dom": "^19.0.0",
+    "react-dom": "^18.2.0",
     "react-hot-toast": "^2.5.1",
     "react-scripts": "5.0.1"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "build": "cross-env GENERATE_SOURCEMAP=false react-scripts build",
+    "test": "react-scripts test --coverage",
+    "eject": "react-scripts eject",
+    "lint": "eslint src/**/*.{ts,tsx}",
+    "analyze": "source-map-explorer 'build/static/js/*.js'",
+    "cypress": "cypress open",
+    "prepare": "husky install"
   },
   "eslintConfig": {
     "extends": [
@@ -39,6 +44,14 @@
     ]
   },
   "devDependencies": {
-    "@types/react-dom": "^19.0.3"
+    "@types/react-dom": "^18.2.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/jest-dom": "^5.16.5",
+    "cross-env": "^7.0.3",
+    "eslint": "^8.38.0",
+    "husky": "^8.0.3",
+    "source-map-explorer": "^2.5.3",
+    "@types/react": "^18.2.0",
+    "@types/jest": "^29.5.0"
   }
 }
